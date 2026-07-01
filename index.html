@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1. Yıl Dönümümüz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-3xl w-full bg-white p-8 rounded-3xl shadow-2xl text-center border-4 border-pink-100">
+        <img id="main-image" src="1.jpeg" class="w-full h-[500px] object-cover rounded-2xl mb-6 shadow-lg">
+        
+        <p id="slide-text" class="text-2xl font-serif text-pink-900 mb-8 h-28 flex items-center justify-center italic">
+            Yükleniyor...
+        </p>
+        
+        <div class="flex justify-center gap-6 mb-8">
+            <button onclick="prevSlide()" class="bg-pink-200 hover:bg-pink-300 px-10 py-4 rounded-full font-bold text-lg transition">Geri</button>
+            <button onclick="nextSlide()" class="bg-pink-200 hover:bg-pink-300 px-10 py-4 rounded-full font-bold text-lg transition">İleri</button>
+        </div>
+        
+        <button onclick="toggleMusic()" class="bg-pink-100 text-pink-700 px-6 py-2 rounded-full border border-pink-300 hover:bg-pink-200 transition">
+            Müziği Başlat / Durdur 🎵
+        </button>
+    </div>
+
+    <audio id="bgMusic">
+        <source id="music-source" src="1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Buradaki startTime değerlerini saniye cinsinden (örn: 30) değiştirebilirsin
+        const data = [
+            { img: "1.jpeg", text: "Çiçeğim ve çiçeğini aynı anda gördüğüm ilk gün. 18 Temmuz 2025.", music: "1.mp3", startTime: 0 },
+            { img: "2.jpg", text: "Özeti bittikten sonra yeni bölüme başlamadan önceki reklamlar.", music: "2.mp3", startTime: 0 },
+            { img: "3.jpeg", text: "Reklamlardan sonraki en güzel başlangıçlardan biriydi.", music: "3.mp3", startTime: 0 },
+            { img: "4.jpeg", text: "3. Ayımız ve açık hava sineması. Irgandı köprüsündeki maça 1 2 kere gözüm kaydı :D", music: "4.mp3", startTime: 0 },
+            { img: "5.jpeg", text: "Ortamını ve sahlebini beğendiğim mekana güzelliği ile güzellik katan hanımefendi.", music: "5.mp3", startTime: 0 },
+            { img: "6.jpeg", text: "Solmayan çiçek yapmışlar.", music: "6.mp3", startTime: 0 },
+            { img: "7.jpeg", text: "Çok eğlendiğim günün kapanışını yaparken seninle çekindiğimiz en güzel fotoğraflardan biri.", music: "7.mp3", startTime: 0 },
+            { img: "8.jpeg", text: "Sağ koltuk prensesimm", music: "8.mp3", startTime: 0 },
+            { img: "9.jpeg", text: "Cami bahçesi seviyoruz dedik hanımım bizi onlardan birine götürdü.", music: "9.mp3", startTime: 0 },
+            { img: "10.jpeg", text: "29 Ekim coşkusu ve ikimizinde gözlerinde beliren o ışıltı.", music: "10.mp3", startTime: 0 },
+            { img: "11.jpeg", text: "Doğal ve samimi bir ortamda 5 dakika önce sincap gören iki masum köylü.", music: "11.mp3", startTime: 0 },
+            { img: "12.jpeg", text: "Çektiğim en güzel fotoğrafın.", music: "12.mp3", startTime: 0 },
+            { img: "13.jpeg", text: "Yerim seni diye şaka yaptığımı sanarken bence şaka yapmayıp ne kadar ciddi olduğum anlaşılmıştır.", music: "13.mp3", startTime: 0 },
+            { img: "14.jpeg", text: "Huzuru, şefkati, mutluluğu tarif edin deseler açıp bu fotoğrafı gösteririm.", music: "14.mp3", startTime: 0 },
+            { img: "15.jpeg", text: "Telefonuma bırakılan en tatlı hediyeydi.", music: "15.mp3", startTime: 0 },
+            { img: "16.jpeg", text: "Beraber girdiğimiz ilk yeni yıldı. Nasıl girersen öyle geçer.", music: "16.mp3", startTime: 0 },
+            { img: "17.jpeg", text: "6. ayımızı kutlarken kameralara yakalanmışız.", music: "17.mp3", startTime: 0 },
+            { img: "18.jpeg", text: "Herkes gördüğü sanat eserini çekiyor.", music: "18.mp3", startTime: 0 },
+            { img: "19.jpeg", text: "14 Şubat her zaman birbirimizin yanında olacağız.", music: "19.mp3", startTime: 0 },
+            { img: "20.jpeg", text: "Sevgilim 2-3 aylık hırka örgü merasiminin defilesini yapıyorr.", music: "20.mp3", startTime: 0 },
+            { img: "21.jpeg", text: "Şeytanın bacağını kırdığımız gün.", music: "21.mp3", startTime: 0 },
+            { img: "22.jpeg", text: "Yağmurdan ıslanmamak için şemsiye var da sevginden ıslanmamak için ne yapmam lazım.", music: "22.mp3", startTime: 0 },
+            { img: "23.jpeg", text: "Beraber geçirdiğimiz ilk doğum günün yüzündeki mutluluk asla eksik olmasın.", music: "23.mp3", startTime: 0 },
+            { img: "24.jpeg", text: "Neymiş efendim, arkadaşım sevgilisi ve çelengi imiş :D", music: "24.mp3", startTime: 0 },
+            { img: "25.jpeg", text: "Sevgilimin örgü merasimi V2", music: "25.mp3", startTime: 0 }
+        ];
+
+        let index = 0;
+        const imgEl = document.getElementById('main-image');
+        const textEl = document.getElementById('slide-text');
+        const audioEl = document.getElementById('bgMusic');
+        const sourceEl = document.getElementById('music-source');
+
+        function updateSlide() {
+            imgEl.src = data[index].img;
+            textEl.innerText = data[index].text;
+            sourceEl.src = data[index].music;
+            audioEl.load();
+            
+            // Başlangıç zamanını uygula
+            audioEl.onloadedmetadata = function() {
+                audioEl.currentTime = data[index].startTime;
+                audioEl.play();
+            };
+        }
+
+        function nextSlide() {
+            index = (index + 1) % data.length;
+            updateSlide();
+        }
+
+        function prevSlide() {
+            index = (index - 1 + data.length) % data.length;
+            updateSlide();
+        }
+
+        function toggleMusic() {
+            audioEl.paused ? audioEl.play() : audioEl.pause();
+        }
+
+        // İlk sayfa yüklenince çalıştır
+        updateSlide();
+    </script>
+</body>
+</html>
